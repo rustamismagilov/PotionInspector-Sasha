@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
 public class BookManager : MonoBehaviour
 {
@@ -9,6 +9,7 @@ public class BookManager : MonoBehaviour
     [SerializeField] private float moveSpeed = 1.0f;
     private GameObject bookCanvas;
     private bool isOpen;
+    private Coroutine moveRoutine;
 
     public bool IsOpen()
     {
@@ -34,19 +35,17 @@ public class BookManager : MonoBehaviour
 
     public void MoveToOpen()
     {
-            transform.DOMove(snapPositions[2].transform.position, moveSpeed);
-            bookCanvas.SetActive(true);
-            isOpen = true;
+        StartMove(snapPositions[2].transform.position, OnMoveFinishedOpen);
     }
 
     public void MoveOffscreen()
     {
-        transform.DOMove(snapPositions[0].transform.position, moveSpeed);
+        StartMove(snapPositions[0].transform.position, null);
     }
 
     public void MoveToHover()
     {
-        transform.DOMove(snapPositions[1].transform.position, moveSpeed);
+        StartMove(snapPositions[1].transform.position, null);
     }
 
     public void CloseBook()
@@ -56,4 +55,33 @@ public class BookManager : MonoBehaviour
     }
     
     
+
+    private void OnMoveFinishedOpen()
+    {
+        bookCanvas.SetActive(true);
+        isOpen = true;
+    }
+
+    private void StartMove(Vector3 targetPos, System.Action onComplete)
+    {
+        if (moveRoutine != null)
+        {
+            StopCoroutine(moveRoutine);
+        }
+
+        moveRoutine = StartCoroutine(MoveRoutine(targetPos, onComplete));
+    }
+
+    private IEnumerator MoveRoutine(Vector3 targetPos, System.Action onComplete)
+    {
+        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        transform.position = targetPos;
+        onComplete?.Invoke();
+        moveRoutine = null;
+    }
 }
