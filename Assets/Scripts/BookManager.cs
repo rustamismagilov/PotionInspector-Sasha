@@ -7,6 +7,7 @@ public class BookManager : MonoBehaviour
 {
     [SerializeField] List<GameObject> snapPositions;
     [SerializeField] private float moveSpeed = 1.0f;
+
     private GameObject bookCanvas;
     private bool isOpen;
     private Coroutine moveRoutine;
@@ -35,17 +36,17 @@ public class BookManager : MonoBehaviour
 
     public void MoveToOpen()
     {
-        StartMove(snapPositions[2].transform.position, OnMoveFinishedOpen);
+        StartMoveToOpen();
     }
 
     public void MoveOffscreen()
     {
-        StartMove(snapPositions[0].transform.position, null);
+        StartMoveTo(snapPositions[0].transform.position);
     }
 
     public void MoveToHover()
     {
-        StartMove(snapPositions[1].transform.position, null);
+        StartMoveTo(snapPositions[1].transform.position);
     }
 
     public void CloseBook()
@@ -56,23 +57,23 @@ public class BookManager : MonoBehaviour
     
     
 
-    private void OnMoveFinishedOpen()
-    {
-        bookCanvas.SetActive(true);
-        isOpen = true;
-    }
-
-    private void StartMove(Vector3 targetPos, System.Action onComplete)
+    private void StartMoveToOpen()
     {
         if (moveRoutine != null)
-        {
             StopCoroutine(moveRoutine);
-        }
 
-        moveRoutine = StartCoroutine(MoveRoutine(targetPos, onComplete));
+        moveRoutine = StartCoroutine(MoveRoutineToOpen(snapPositions[2].transform.position));
     }
 
-    private IEnumerator MoveRoutine(Vector3 targetPos, System.Action onComplete)
+    private void StartMoveTo(Vector3 targetPos)
+    {
+        if (moveRoutine != null)
+            StopCoroutine(moveRoutine);
+
+        moveRoutine = StartCoroutine(MoveRoutine(targetPos));
+    }
+
+    private IEnumerator MoveRoutineToOpen(Vector3 targetPos)
     {
         while (Vector3.Distance(transform.position, targetPos) > 0.01f)
         {
@@ -81,7 +82,20 @@ public class BookManager : MonoBehaviour
         }
 
         transform.position = targetPos;
-        onComplete?.Invoke();
+        bookCanvas.SetActive(true);
+        isOpen = true;
+        moveRoutine = null;
+    }
+
+    private IEnumerator MoveRoutine(Vector3 targetPos)
+    {
+        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        transform.position = targetPos;
         moveRoutine = null;
     }
 }
