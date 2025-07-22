@@ -8461,7 +8461,7 @@ MonoBehaviour:
   - {fileID: 32437615}
   - {fileID: 1450499038}
   - {fileID: 1729111773}
-  approachDuration: 3
+  approachDuration: 7
   departDuration: 7
 --- !u!1 &1228729696
 GameObject:

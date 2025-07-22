@@ -112,8 +112,6 @@ public class CustomerMovement : MonoBehaviour
                 animator.SetTrigger(Up);
                 break;
             case 1:
-                Debug.Log("Reset up");
-                animator.ResetTrigger(Up);
                 Debug.Log("Set waiting");
                 animator.SetBool(Waiting, true);
                 break;
@@ -127,16 +125,15 @@ public class CustomerMovement : MonoBehaviour
 
     void DepartCallback(int waypointIndex)
     {
-        switch (waypointIndex)
+        int finalIndex = departPath.Length - 1;
+
+        if (waypointIndex < finalIndex)
         {
-            case 1:
-                Debug.Log("Walking down");
-                animator.SetTrigger(Down);
-                break;
-            case 2:
-                Debug.Log("Just walking");
-                animator.SetTrigger(Walk);
-                break;
+            animator.SetTrigger(Walk);
+        }
+        else
+        {
+            Debug.Log("Reached final point");
         }
     }
 
