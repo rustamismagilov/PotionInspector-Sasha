@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,17 +20,22 @@ public class AromaType : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (aromaSprites.Length != Enum.GetValues(typeof(AromaOptions)).Length)
+        {
+            Debug.LogError("Aroma sprite count does not match the number of AromaOptions.");
+            return;
+        }
+
         aromaSet = new Dictionary<AromaOptions, Sprite>();
-        aromaSet.Add(AromaOptions.Metallic, aromaSprites[0]);
-        aromaSet.Add(AromaOptions.Sweet, aromaSprites[1]);
-        aromaSet.Add(AromaOptions.Herbal, aromaSprites[2]);
-        aromaSet.Add(AromaOptions.Fishy, aromaSprites[3]);
-        aromaSet.Add(AromaOptions.Sulfuric, aromaSprites[4]);
-        aromaSet.Add(AromaOptions.Bloody, aromaSprites[5]);
+        for (int i = 0; i < aromaSprites.Length; i++)
+        {
+            aromaSet[(AromaOptions)i] = aromaSprites[i];
+        }
     }
 
     public Sprite GetAroma(AromaOptions aromaType)
     {
-        return aromaSet[aromaType];
+        aromaSet.TryGetValue(aromaType, out var sprite);
+        return sprite;
     }
 }

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
 
@@ -9,115 +8,143 @@ public class CustomerMovement : MonoBehaviour
     private static readonly int Down = Animator.StringToHash("down");
     private static readonly int Waiting = Animator.StringToHash("waiting");
     private static readonly int Up = Animator.StringToHash("up");
-    [SerializeField] private Vector3[] approachPath = new Vector3[3];
-    [SerializeField] private Vector3[] departPath = new Vector3[4];
+    [SerializeField] private Transform[] approachPath;
+    [SerializeField] private Transform[] departPath;
     [SerializeField] private float approachDuration = 5f;
     [SerializeField] private float departDuration = 7f;
     private Animator animator;
 
     private bool helpingCustomer = false;
-    private bool isWaiting = false;
 
-    private int index;
+    private Coroutine currentMoveRoutine;
 
     public bool HelpingCustomer()
     {
         return helpingCustomer;
     }
-    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
     }
-    
+
     public void CustomerReset()
     {
         if (!helpingCustomer) //reset customer only if they have already departed the scene
         {
             gameObject.SetActive(true);
-            transform.localPosition = approachPath[0];
+
+            if (approachPath != null && approachPath.Length > 0)
+            {
+                transform.position = approachPath[0].position;
+            }
         }
-        
     }
     public void CustomerArrive()
     {
         //call customer to booth
-        if (helpingCustomer == false)
+        if (helpingCustomer) return;
+
+        if (currentMoveRoutine != null)
         {
-            transform.DOLocalPath(approachPath, approachDuration).OnWaypointChange(ApproachCallback);
-            helpingCustomer = true;
+            StopCoroutine(currentMoveRoutine);
         }
-        else
-        {
-            print("currently helping a customer! please wait your turn");
-        }
-        
+
+        animator.SetTrigger(Walk);
+
+        currentMoveRoutine = StartCoroutine(FollowPath(approachPath, approachDuration, ApproachCallback, OnApproachComplete));
     }
 
     public void CustomerDepart()
     {
-        //send customer on their way
-        //to be called upon checklist completion
-        if (!helpingCustomer) return; //a customer can only depart if they have first arrived
+        if (!helpingCustomer)
+        {
+            Debug.Log("Customer hasn't been served yet or not available.");
+            return;
+        }
 
-        if (helpingCustomer && isWaiting)
-        {
-            transform.DOLocalPath(departPath, departDuration).OnWaypointChange(DepartCallback); 
-        }
-        else if (isWaiting == false && helpingCustomer)
-        {
-            print("customer hasn't been served yet!");
-        }
+        if (currentMoveRoutine != null)
+            StopCoroutine(currentMoveRoutine);
+
+        animator.SetBool(Waiting, false);
+        animator.SetTrigger(Walk);
+
+        currentMoveRoutine = StartCoroutine(FollowPath(departPath, departDuration, DepartCallback, OnDepartComplete));
     }
-    
+
+
+    IEnumerator FollowPath(Transform[] path, float duration, System.Action<int> onWaypoint, System.Action onComplete)
+    {
+        float totalDist = 0f;
+        for (int i = 0; i < path.Length - 1; i++)
+        {
+            totalDist += Vector3.Distance(path[i].position, path[i + 1].position);
+        }
+
+        for (int i = 0; i < path.Length - 1; i++)
+        {
+            Vector3 start = path[i].position;
+            Vector3 end = path[i + 1].position;
+            float dist = Vector3.Distance(start, end);
+            float segmentDuration = duration * (dist / totalDist);
+            float t = 0f;
+
+            while (t < 1f)
+            {
+                t += Time.deltaTime / segmentDuration;
+                transform.position = Vector3.MoveTowards(transform.position, end, Time.deltaTime * dist / segmentDuration);
+                yield return null;
+            }
+
+            onWaypoint?.Invoke(i);  // notify reaching waypoint
+        }
+
+        onComplete?.Invoke();
+    }
+
     void ApproachCallback(int waypointIndex)
     {
-        //change animation based on waypoint location
-            switch (waypointIndex)
-            {
-                case 0:
-                    print("point 0");
-                    break;
-                case 1:
-                    animator.SetTrigger(Up);
-                    print("p1");
-                    break;
-                case 2:
-                    animator.SetBool(Waiting, true);
-                    isWaiting = true;
-                    print("p2");
-                    break;
-            }
+        switch (waypointIndex)
+        {
+            case 0:
+                Debug.Log("Walking up");
+                animator.SetTrigger(Up);
+                break;
+            case 1:
+                Debug.Log("Reset up");
+                animator.ResetTrigger(Up);
+                Debug.Log("Set waiting");
+                animator.SetBool(Waiting, true);
+                break;
+        }
+    }
+
+    private void OnApproachComplete()
+    {
+        helpingCustomer = true;
     }
 
     void DepartCallback(int waypointIndex)
     {
-        //change animation based on waypoint location
         switch (waypointIndex)
         {
-            case 0:
-                animator.SetBool(Waiting, false);
-                animator.SetTrigger(Walk);
-                isWaiting = false;
-                print("point 0");
-                break;
             case 1:
+                Debug.Log("Walking down");
                 animator.SetTrigger(Down);
-                print("p1");
                 break;
             case 2:
+                Debug.Log("Just walking");
                 animator.SetTrigger(Walk);
-                print("p2");
-                break;
-            case 3:
-                print("end");
-                helpingCustomer = false; //free the merchant to help the next customer
-                gameObject.SetActive(false);
-                Invoke(nameof(CustomerReset), 2f);
                 break;
         }
     }
 
-   
+
+    private void OnDepartComplete()
+    {
+        helpingCustomer = false;
+        gameObject.SetActive(false);
+        Invoke(nameof(CustomerReset), 2f);
+    }
 }
