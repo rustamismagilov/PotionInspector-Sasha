@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 public class OpenBusiness : MonoBehaviour
 {
-    [Tooltip("time before menu fully closes")][SerializeField] private float closeDelay = 2f;
+    [Tooltip("time before menu fully closes")]
+    [SerializeField] private float closeDelay = 2f;
     
     private TMP_Text signText;
     private static readonly int Fade = Animator.StringToHash("fade");

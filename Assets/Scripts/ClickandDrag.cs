@@ -12,11 +12,13 @@ public class ClickandDrag : MonoBehaviour
 
     private void OnMouseDown()
     {
+        //Debug.Log("Clicked on " + gameObject.name);
         mousePosOffset = gameObject.transform.position - GetMouseWorldPos();
     }
 
     private void OnMouseDrag()
     {
+        //Debug.Log("Dragging " + gameObject.name);
         transform.position = GetMouseWorldPos() + mousePosOffset;
     }
 

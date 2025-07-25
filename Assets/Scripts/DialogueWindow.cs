@@ -12,7 +12,7 @@ public class DialogueWindow : MonoBehaviour
     private bool onScreen = false;
     private TextMeshProUGUI dialogueText;
     
-    //TO ADD: space to pass through dialogue from CustomerSO
+    //TODO: space to pass through dialogue from CustomerSO
     
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
