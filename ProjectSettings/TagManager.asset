@@ -14,6 +14,8 @@ TagManager:
   - Seal
   - Potion
   - Candle
+  - Stamp
+  - Dropper
   layers:
   - Default
   - TransparentFX

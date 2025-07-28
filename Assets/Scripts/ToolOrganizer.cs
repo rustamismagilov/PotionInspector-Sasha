@@ -2,21 +2,25 @@ using UnityEngine;
 
 public class ToolOrganizer : MonoBehaviour
 {
-   [SerializeField] private Transform toolHolder;
-   [SerializeField] private Transform toolMenu;
-   [SerializeField] private GameObject minimizeButton;
+    [SerializeField] private RectTransform toolHolder;
+    [SerializeField] private RectTransform toolMenu;
+    [SerializeField] private GameObject minimizeButton;
 
     public void OnTriggerExit2D(Collider2D other)
     {
         if (!Application.isPlaying || toolMenu == null || toolHolder == null)
             return;
 
-        if (!other.CompareTag("Tool"))
+        if (!(
+    other.CompareTag("Stamp") ||
+    other.CompareTag("Dropper") ||
+    other.CompareTag("Candle")))
+        {
             return;
-        
+        }
+
+
         Debug.Log("Tool removed");
-        
-        PrintAllToolStates();
 
         var tool = other.gameObject;
         var toolScript = tool.GetComponent<ToolScript>();
@@ -33,13 +37,16 @@ public class ToolOrganizer : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Tool"))
+        if (!(
+    other.CompareTag("Stamp") ||
+    other.CompareTag("Dropper") ||
+    other.CompareTag("Candle")))
+        {
             return;
-        
+        }
+
         Debug.Log("Tool returned");
-        
-        PrintAllToolStates();
-        
+
         var tool = other.gameObject;
         var toolScript = tool.GetComponent<ToolScript>();
         toolScript.ChangeState(false);
@@ -49,16 +56,5 @@ public class ToolOrganizer : MonoBehaviour
             tool.transform.SetParent(toolMenu, false);
         }
 
-    }
-
-    private void PrintAllToolStates()
-    {
-        var tools = GameObject.FindGameObjectsWithTag("Tool");
-        foreach (var tool in tools)
-        {
-            var toolScript = tool.GetComponent<ToolScript>();
-            Debug.Log($"{tool.name} | OnDesk: {toolScript.OnDesk()} | Parent: {tool.transform.parent.name}");
-        }
-        
     }
 }
