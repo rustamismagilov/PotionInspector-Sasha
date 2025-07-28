@@ -1,0 +1,92 @@
+using UnityEngine;
+
+public class BannerToolsSnapZone : MonoBehaviour
+{
+    public enum ZoneLocation { Top, Mid, Bottom }
+    public ZoneLocation zone;
+
+    public string allowedToolTag = "";
+    public RectTransform snapTarget;
+
+    [SerializeField] private RectTransform toolHolder;
+    [SerializeField] private RectTransform toolMenu;
+    [SerializeField] private GameObject minimizeButton;
+
+    private GameObject hoveredTool;
+    private BannerToolsSnapZone currentZone;
+
+    void Update()
+    {
+        if (hoveredTool != null && currentZone != null)
+        {
+            if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+            {
+                hoveredTool.transform.SetParent(currentZone.snapTarget, false);
+                hoveredTool.transform.localPosition = Vector3.zero;
+                Debug.Log($"Snapped {hoveredTool.name} to {currentZone.zone}");
+
+                hoveredTool = null;
+                currentZone = null;
+            }
+        }
+    }
+
+    public void OnTriggerExit2D(Collider2D other)
+    {
+        if (!Application.isPlaying || toolMenu == null || toolHolder == null)
+            return;
+
+        if (!(
+    other.CompareTag("Stamp") ||
+    other.CompareTag("Dropper") ||
+    other.CompareTag("Candle")))
+        {
+            return;
+        }
+
+
+        Debug.Log("Tool removed");
+
+        var tool = other.gameObject;
+        var toolScript = tool.GetComponent<ToolScript>();
+        toolScript.ChangeState(true);
+
+        if (tool.transform.parent != toolHolder)
+        {
+            tool.transform.SetParent(toolHolder, false);
+        }
+
+        var pos = tool.transform.position;
+
+    }
+
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!(
+    other.CompareTag("Stamp") ||
+    other.CompareTag("Dropper") ||
+    other.CompareTag("Candle")))
+        {
+            return;
+        }
+
+        Debug.Log("Tool returned");
+
+        if (TryGetComponent(out BannerToolsSnapZone zone))
+        {
+            if (other.CompareTag(zone.allowedToolTag))
+            {
+                hoveredTool = other.gameObject;
+                currentZone = zone;
+
+                var toolScript = other.GetComponent<ToolScript>();
+                toolScript.ChangeState(false);
+            }
+        }
+
+        //if (hoveredTool.transform.parent != toolMenu)
+        //{
+        //    hoveredTool.transform.SetParent(toolMenu, false);
+        //}
+    }
+}
