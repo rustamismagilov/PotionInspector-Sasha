@@ -9,6 +9,7 @@ public class CandleTool : MonoBehaviour
 
     private PotionManager potionManager;
     private DropperTool dropper;
+    // The position where the flame will be spawned
     [SerializeField] Transform flameSpawnPos;
     private GameObject currentFlame;
 
@@ -33,17 +34,21 @@ public class CandleTool : MonoBehaviour
 
     public void IgniteFlame()
     {
+        // ensure we have the flame prefab and color set, otherwise return
         if (!dropper.UsingDropper() || !dropper.GotDrop())
             return;
 
+        // prevent multiple flames from being spawned
         if (currentFlame != null)
         {
             Debug.Log("Flame already exists. Skipping spawn of the new one.");
             return;
         }
 
+        // otherwise, spawn the flame
         currentFlame = Instantiate(flamePrefab, flameSpawnPos.position, Quaternion.identity, flameSpawnPos);
 
+        // set the flame color by getting the Image component in the flame prefab and then changing its color
         var flameImage = currentFlame.GetComponentInChildren<Image>();
         if (flameImage != null)
         {

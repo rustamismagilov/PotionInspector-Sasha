@@ -8,6 +8,7 @@ public class ScriptablePotions : ScriptableObject
     [TextArea(1, 3)]
     [SerializeField] private string potionName = "Potion name...";
     [Tooltip("Choose type based on color")][SerializeField] private PotionType potionType;
+    // instead of using actual Color, use PotionColorType enum to define potion "color" (which is sprite)
     [SerializeField] private PotionColorType colorType;
     [SerializeField] private Sprite potionSprite;
 
@@ -42,6 +43,7 @@ public class ScriptablePotions : ScriptableObject
         return alchemist;
     }
 
+    // Return the sprite for a specific potion color type
     public PotionColorType GetPotionColorType()
     {
         return colorType;

@@ -7,6 +7,7 @@ public class ClickandDrag : MonoBehaviour
 
     private void Update()
     {
+        // if the DropperTool is currently being used, disable dragging
         if (FindFirstObjectByType<DropperTool>().UsingDropper())
             return;
     }

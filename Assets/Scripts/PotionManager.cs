@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+// Enum for potion color types (can be optimized by using existing PotionType)
 public enum PotionColorType
 {
     Red,
@@ -41,7 +42,9 @@ public class PotionManager : MonoBehaviour
     [SerializeField] private float moveSpeed = 1f;
 
     [Header("Color")]
+    // instead of actually using color, just use sprites for color representation
     [SerializeField] private Sprite[] colorSprites;
+    // Dictionary to map PotionColorType to corresponding sprites
     private Dictionary<PotionColorType, Sprite> colorMap;
 
     private bool hasPotion = false;
@@ -61,6 +64,7 @@ public class PotionManager : MonoBehaviour
         return currentPotion;
     }
 
+    // Get the sprite for a specific potion color type
     public Sprite GetColorSprite(PotionColorType color)
     {
         colorMap.TryGetValue(color, out var sprite);
@@ -69,6 +73,7 @@ public class PotionManager : MonoBehaviour
 
     void Awake()
     {
+        // Initialize the color map with the provided sprites
         var values = Enum.GetValues(typeof(PotionColorType));
         if (colorSprites.Length != values.Length)
         {
