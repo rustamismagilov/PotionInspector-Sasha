@@ -10,6 +10,7 @@ public class CandleTool : MonoBehaviour
     private PotionManager potionManager;
     private DropperTool dropper;
     [SerializeField] Transform flameSpawnPos;
+    private GameObject currentFlame;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,17 +33,21 @@ public class CandleTool : MonoBehaviour
 
     public void IgniteFlame()
     {
-        if (dropper.UsingDropper() && dropper.GotDrop())
+        if (!dropper.UsingDropper() || !dropper.GotDrop())
+            return;
+
+        if (currentFlame != null)
         {
-            GameObject flameInstance = Instantiate(flamePrefab, flameSpawnPos);
+            Debug.Log("Flame already exists. Skipping spawn of the new one.");
+            return;
+        }
 
-            Image flameImage = flameInstance.GetComponentInChildren<Image>();
-            if (flameImage != null)
-            {
-                flameImage.color = flameColor;
-            }
+        currentFlame = Instantiate(flamePrefab, flameSpawnPos.position, Quaternion.identity, flameSpawnPos);
 
-            //dropper.MakeDroplet();
+        var flameImage = currentFlame.GetComponentInChildren<Image>();
+        if (flameImage != null)
+        {
+            flameImage.color = flameColor;
         }
     }
 }
