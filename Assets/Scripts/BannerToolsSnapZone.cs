@@ -48,7 +48,7 @@ public class BannerToolsSnapZone : MonoBehaviour
 
     public void OnTriggerExit2D(Collider2D other)
     {
-        if (!Application.isPlaying || toolMenu == null || toolHolder == null)
+        if (gameObject.scene.isLoaded == false)
             return;
 
         if (!(
