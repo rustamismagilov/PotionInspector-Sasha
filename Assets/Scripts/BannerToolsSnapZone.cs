@@ -15,6 +15,21 @@ public class BannerToolsSnapZone : MonoBehaviour
     private GameObject hoveredTool;
     private BannerToolsSnapZone currentZone;
 
+    void Start()
+    {
+        // find all tools in the scene only with allowed tags
+        GameObject[] tools = GameObject.FindGameObjectsWithTag(allowedToolTag);
+
+        // snap them to their respective positions
+        foreach (GameObject tool in tools)
+        {
+            tool.transform.SetParent(snapTarget, false);
+            tool.transform.localPosition = Vector3.zero;
+
+            Debug.Log($"Snapped {tool.name} to {zone} at start");
+        }
+    }
+
     void Update()
     {
         if (hoveredTool != null && currentZone != null)
@@ -83,10 +98,5 @@ public class BannerToolsSnapZone : MonoBehaviour
                 toolScript.ChangeState(false);
             }
         }
-
-        //if (hoveredTool.transform.parent != toolMenu)
-        //{
-        //    hoveredTool.transform.SetParent(toolMenu, false);
-        //}
     }
 }
