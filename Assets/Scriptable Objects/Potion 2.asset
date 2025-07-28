@@ -18,7 +18,7 @@ MonoBehaviour:
   potionSprite: {fileID: 21300000, guid: 55aab8765afba463e941adf95e1e399b, type: 3}
   alchemist: 1
   aromas: 030000000000000004000000
-  magicFlame: {fileID: 7518065151566740802, guid: fc0e8c8af53ae4905817744713305ef9, type: 3}
+  flameType: {fileID: 7518065151566740802, guid: fc0e8c8af53ae4905817744713305ef9, type: 3}
   flameColor: {r: 1, g: 0.8431373, b: 0, a: 1}
   tasteEffect: Ugh it does NOT taste good. You feel slightly stronger, somehow.
   approvable: 0

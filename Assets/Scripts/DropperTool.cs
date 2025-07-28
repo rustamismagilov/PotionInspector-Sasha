@@ -83,6 +83,13 @@ public class DropperTool : MonoBehaviour
                         GetDropletColor();
                         break;
                     }
+
+                    if (result.gameObject.CompareTag("Candle") && GotDrop())
+                    {
+                        Debug.Log("Candle clicked with dropper and droplet active");
+                        result.gameObject.GetComponent<CandleTool>()?.IgniteFlame();
+                        break;
+                    }
                 }
 
                 if (results.Count == 0) // if there is nothing in the way of raycast = do nothing (print message)
