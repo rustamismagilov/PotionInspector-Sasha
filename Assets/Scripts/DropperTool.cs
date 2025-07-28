@@ -36,6 +36,7 @@ public class DropperTool : MonoBehaviour
         if (eventSystem == null) eventSystem = FindFirstObjectByType<EventSystem>();
         thisTool = GetComponent<ToolScript>();
         potionManager = FindFirstObjectByType<PotionManager>();
+        droplet.GetComponent<Image>().enabled = false;
     }
 
     void Update()
@@ -108,7 +109,7 @@ public class DropperTool : MonoBehaviour
 
             if (gotDrop)
             {
-                droplet.SetActive(false);
+                droplet.GetComponent<Image>().enabled = false;
                 gotDrop = false;
             }
         }
@@ -126,7 +127,7 @@ public class DropperTool : MonoBehaviour
         {
             var image = droplet.GetComponent<Image>();
             image.sprite = colorSprite;
-            droplet.SetActive(true);
+            droplet.GetComponent<Image>().enabled = true;
             gotDrop = true;
 
             Debug.Log($"Droplet shown with sprite {colorSprite} for color: {colorType}");
@@ -142,7 +143,7 @@ public class DropperTool : MonoBehaviour
     {
         if (droplet != null)
         {
-            droplet.SetActive(true);
+            droplet.GetComponent<Image>().enabled = true;
             gotDrop = true;
         }
     }
