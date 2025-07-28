@@ -1,17 +1,23 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DropperTool : MonoBehaviour
 {
     [SerializeField] private float dropperFollowSpeed = 0.5f;
     [SerializeField] private GameObject droplet;
+
+    [SerializeField] private GraphicRaycaster uiRaycaster;
+    [SerializeField] private EventSystem eventSystem;
+
+
     private ToolScript thisTool;
     private PotionManager potionManager;
     private bool usingDropper = false;
     private Vector3 mousePosition;
     private bool gotDrop = false;
-    private Color dropletColor;
 
     public bool GotDrop()
     {
@@ -26,6 +32,8 @@ public class DropperTool : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (uiRaycaster == null) uiRaycaster = FindFirstObjectByType<GraphicRaycaster>();
+        if (eventSystem == null) eventSystem = FindFirstObjectByType<EventSystem>();
         thisTool = GetComponent<ToolScript>();
         potionManager = FindFirstObjectByType<PotionManager>();
     }
@@ -58,14 +66,27 @@ public class DropperTool : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0))
             {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+                PointerEventData pointerData = new PointerEventData(eventSystem);
+                pointerData.position = Input.mousePosition;
 
-                if (hit.collider != null && hit.collider.CompareTag("Potion"))
+                var results = new List<RaycastResult>();
+                uiRaycaster.Raycast(pointerData, results);
+
+                foreach (var result in results) // just because we can have more than 1 thing in the way of raycast
+                                                // we will iterate through all of them and find the one with tag "Potion"
                 {
-                    Debug.Log("Hit: " + hit.collider.name);
-                    Debug.Log("Tag on hit: " + hit.collider.tag);
-                    GetDropletColor();
+                    Debug.Log("UI Hit: " + result.gameObject.name);
+
+                    if (result.gameObject.CompareTag("Potion"))
+                    {
+                        GetDropletColor();
+                        break;
+                    }
+                }
+
+                if (results.Count == 0) // if there is nothing in the way of raycast = do nothing (print message)
+                {
+                    Debug.Log("UI raycast found nothing.");
                 }
             }
         }
@@ -105,11 +126,10 @@ public class DropperTool : MonoBehaviour
         {
             var image = droplet.GetComponent<Image>();
             image.sprite = colorSprite;
-            image.color = Color.white; // Ensure alpha is visible
             droplet.SetActive(true);
             gotDrop = true;
 
-            Debug.Log("Droplet shown with sprite for color: " + colorType);
+            Debug.Log($"Droplet shown with sprite {colorSprite} for color: {colorType}");
         }
         else
         {
