@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   potionName: Sketchy Potion of Charm
   potionType: 1
-  liquidColor: {r: 0.9150943, g: 0.69742626, b: 0, a: 1}
+  colorType: 2
   potionSprite: {fileID: 21300000, guid: 55aab8765afba463e941adf95e1e399b, type: 3}
   alchemist: 1
   aromas: 030000000000000004000000

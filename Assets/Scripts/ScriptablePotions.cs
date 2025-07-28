@@ -10,7 +10,7 @@ public class ScriptablePotions : ScriptableObject
     [TextArea(1, 3)]
     [SerializeField] private string potionName = "Potion name...";
     [Tooltip("Choose type based on color")] [SerializeField] private PotionType potionType;
-    [SerializeField] private Color liquidColor;
+    [SerializeField] private PotionColorType colorType;
     [SerializeField] private Sprite potionSprite;
 
     [Header("Customer/Merchant Name")] 
@@ -22,8 +22,8 @@ public class ScriptablePotions : ScriptableObject
     [SerializeField] private Color flameColor;
     [TextArea(1, 3)] [SerializeField] private string tasteEffect = "Describe the taste & effect of this potion...";
     [Tooltip("Check box if potion should be approved, leave blank if potion should be rejected")][SerializeField] private bool approvable;
-    
 
+    
     public string GetPotionName()
     {
         return potionName;
@@ -44,9 +44,9 @@ public class ScriptablePotions : ScriptableObject
         return alchemist;
     }
 
-    public Color GetPotionColor()
+    public PotionColorType GetPotionColorType()
     {
-        return liquidColor;
+        return colorType;
     }
 
     public List<AromaType.AromaOptions> GetAromas()

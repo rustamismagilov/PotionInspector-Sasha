@@ -2634,7 +2634,6 @@ RectTransform:
   - {fileID: 39016528}
   - {fileID: 478028073}
   - {fileID: 115095839}
-  - {fileID: 648651303}
   m_Father: {fileID: 651478169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -8894,6 +8893,7 @@ RectTransform:
   - {fileID: 2100783395}
   - {fileID: 443220992}
   - {fileID: 2107946398}
+  - {fileID: 648651303}
   m_Father: {fileID: 651478169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9446,6 +9446,13 @@ MonoBehaviour:
   potionSnapOffscreen: {fileID: 197473720}
   potionSnapDesk: {fileID: 1294385876}
   moveSpeed: 1
+  colorSprites:
+  - {fileID: 21300000, guid: dc74f05dffe3f47c487d1c2507473ff0, type: 3}
+  - {fileID: 21300000, guid: cdee0493ba9144a2fa4c1d558f2d9b9c, type: 3}
+  - {fileID: 21300000, guid: 55aab8765afba463e941adf95e1e399b, type: 3}
+  - {fileID: 21300000, guid: c6136dbefec18471f9e033cb89ca2793, type: 3}
+  - {fileID: 21300000, guid: 371c14313aa65438785f7e72be9ee3ed, type: 3}
+  - {fileID: 21300000, guid: e49d5c462a0a340b6a9caa017207984f, type: 3}
 --- !u!1 &632433166
 GameObject:
   m_ObjectHideFlags: 0
@@ -9610,7 +9617,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 183640638}
+  m_Father: {fileID: 603362334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11929,7 +11936,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 931664913}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -12559,7 +12566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &971471042
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12587,7 +12594,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 971471041}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -15383,7 +15390,7 @@ GameObject:
   - component: {fileID: 1250387936}
   m_Layer: 5
   m_Name: Current Potion
-  m_TagString: Untagged
+  m_TagString: Potion
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

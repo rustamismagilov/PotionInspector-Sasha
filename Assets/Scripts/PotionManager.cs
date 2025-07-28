@@ -6,29 +6,43 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
+public enum PotionColorType
+{
+    Red,
+    Brown,
+    Gold,
+    Green,
+    Purple,
+    Blue
+}
+
 public class PotionManager : MonoBehaviour
 {
     [Header("Potions")]
     [SerializeField] private List<ScriptablePotions> potionOptions;
     private ScriptablePotions currentPotion;
-    
+
     [Header("Dialogue")]
     [SerializeField] private TextMeshProUGUI dialogueBox;
     [SerializeField] private TMP_Text nametag;
-    
+
     [Header("Inspection")]
     [SerializeField] private GameObject aromaDisplay;
     [SerializeField] private GameObject potionInspectionIcon;
     [SerializeField] private TextMeshProUGUI inspectionText;
 
-    [Header("Checklist")] 
+    [Header("Checklist")]
     [SerializeField] private TMP_Text potionName;
     [SerializeField] private TMP_Text alchemistName;
-    
+
     [Header("Potion Movement")]
     [SerializeField] private Transform potionSnapOffscreen;
     [SerializeField] private Transform potionSnapDesk;
     [SerializeField] private float moveSpeed = 1f;
+
+    [Header("Color")]
+    [SerializeField] private Sprite[] colorSprites;
+    private Dictionary<PotionColorType, Sprite> colorMap;
 
     private bool hasPotion = false;
     private AromaType aromaManager;
@@ -46,7 +60,29 @@ public class PotionManager : MonoBehaviour
     {
         return currentPotion;
     }
-    
+
+    public Sprite GetColorSprite(PotionColorType color)
+    {
+        colorMap.TryGetValue(color, out var sprite);
+        return sprite;
+    }
+
+    void Awake()
+    {
+        var values = Enum.GetValues(typeof(PotionColorType));
+        if (colorSprites.Length != values.Length)
+        {
+            Debug.LogError("Potion color sprite count mismatch.");
+            return;
+        }
+
+        colorMap = new Dictionary<PotionColorType, Sprite>();
+        for (int i = 0; i < colorSprites.Length; i++)
+        {
+            colorMap[(PotionColorType)i] = colorSprites[i];
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -62,23 +98,23 @@ public class PotionManager : MonoBehaviour
     {
         GetRandomPotion();
         checklist.ResetChecklist(); //removes any filled-in checklist details from previous customer
-        
+
         //reset inspection window text and aroma icons
         inspectionText.text = "Let's take a closer look...";
         aromaDisplay.SetActive(false);
-        
+
         //change all images to match current potion
         GetComponentInChildren<Image>().sprite = currentPotion.GetPotionSprite();
         potionInspectionIcon.GetComponent<Image>().sprite = currentPotion.GetPotionSprite();
-        
+
         //customer dialogue window changes
         nametag.text = $"{currentPotion.GetPotionCreator()}";
         dialogueBox.text = $"This is my {currentPotion.GetPotionName()}";
-        
+
         //checklist changes
         potionName.text = $"{currentPotion.GetPotionName()}";
         alchemistName.text = $"{currentPotion.GetPotionCreator()}";
-        
+
         //candle flame changes
         candle.GetFlameInfo();
 
@@ -113,22 +149,22 @@ public class PotionManager : MonoBehaviour
     {
         inspectionText.text = ""; //hide text while aroma sprites are displayed
         aromaDisplay.SetActive(true);
-        
+
         List<AromaType.AromaOptions> aromas = currentPotion.GetAromas(); //get ref to aromas attached to current potionSO
-        
+
         List<Sprite> aromaIcons = new List<Sprite>();
         foreach (var aroma in aromas) //get related icons for each selected aroma
         {
             aromaIcons.Add(aromaManager.GetAroma(aroma));
         }
-        
+
         List<Transform> aromaDisplays = new List<Transform>();
         foreach (Transform child in aromaDisplay.transform) //get locations that will display each aroma icon
         {
             aromaDisplays.Add(child);
         }
-        
-        
+
+
         int count = 0;
         foreach (var display in aromaDisplays)
         {
@@ -140,7 +176,7 @@ public class PotionManager : MonoBehaviour
         {
             Debug.LogError("# of aromas and # of displays mismatch");
         }
-        
+
     }
 
     public void TastePotion()

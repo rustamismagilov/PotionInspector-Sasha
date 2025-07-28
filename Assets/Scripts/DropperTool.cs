@@ -22,7 +22,7 @@ public class DropperTool : MonoBehaviour
     {
         return usingDropper;
     }
-    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,52 +30,100 @@ public class DropperTool : MonoBehaviour
         potionManager = FindFirstObjectByType<PotionManager>();
     }
 
-    private void OnMouseOver()
+    void Update()
     {
-        if (Input.GetMouseButtonDown(1) && thisTool.OnDesk())
+        if (Input.GetMouseButtonDown(1))
         {
-            usingDropper = true;
-            GetComponent<Collider2D>().enabled = false;
-            GetDropletColor();
-            GetComponent<Image>().raycastTarget = false;
+            if (usingDropper)
+            {
+                ToggleDropper();
+            }
+            else
+            {
+                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+
+                if (hit.collider != null && hit.collider.gameObject == gameObject && thisTool.OnDesk())
+                {
+                    ToggleDropper();
+                }
+            }
         }
-    }
 
-    private void GetDropletColor()
-    {
-        potionManager.CurrentPotion().GetPotionColor();
-    }
-    
-
-    private void Update()
-    {
         if (usingDropper)
         {
             mousePosition = Input.mousePosition;
             mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
             transform.position = Vector2.Lerp(transform.position, mousePosition, dropperFollowSpeed);
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+
+                if (hit.collider != null && hit.collider.CompareTag("Potion"))
+                {
+                    Debug.Log("Hit: " + hit.collider.name);
+                    Debug.Log("Tag on hit: " + hit.collider.tag);
+                    GetDropletColor();
+                }
+            }
         }
-        else if (usingDropper && Input.GetMouseButtonDown(1))
+    }
+
+    private void ToggleDropper()
+    {
+        usingDropper = !usingDropper;
+
+        if (usingDropper)
         {
-            usingDropper = false;
-            GetComponent<Collider2D>().enabled = false;
             GetComponent<Image>().raycastTarget = false;
+            GetComponent<Collider2D>().enabled = false;
+        }
+        else
+        {
+            GetComponent<Image>().raycastTarget = true;
+            GetComponent<Collider2D>().enabled = true;
+
             if (gotDrop)
             {
                 droplet.SetActive(false);
+                gotDrop = false;
             }
         }
-        
-        
-        
     }
+
+
+    private void GetDropletColor()
+    {
+        Debug.Log("GetDropletColor() called");
+
+        var colorType = potionManager.CurrentPotion().GetPotionColorType();
+        var colorSprite = potionManager.GetColorSprite(colorType);
+
+        if (colorSprite != null)
+        {
+            var image = droplet.GetComponent<Image>();
+            image.sprite = colorSprite;
+            image.color = Color.white; // Ensure alpha is visible
+            droplet.SetActive(true);
+            gotDrop = true;
+
+            Debug.Log("Droplet shown with sprite for color: " + colorType);
+        }
+        else
+        {
+            Debug.LogWarning("No sprite found for color: " + colorType);
+        }
+    }
+
 
     public void MakeDroplet()
     {
-        droplet.SetActive(true);
-        droplet.GetComponent<Image>().color = dropletColor;
-        gotDrop = true;
+        if (droplet != null)
+        {
+            droplet.SetActive(true);
+            gotDrop = true;
+        }
     }
-    
-    
 }

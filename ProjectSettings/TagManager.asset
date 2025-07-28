@@ -12,6 +12,7 @@ TagManager:
   - MovableObject
   - Tool
   - Seal
+  - Potion
   layers:
   - Default
   - TransparentFX
