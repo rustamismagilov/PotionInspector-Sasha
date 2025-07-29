@@ -34,7 +34,7 @@ public class BannerToolsSnapZone : MonoBehaviour
             tool.transform.SetParent(snapTarget, false);
             tool.transform.localPosition = Vector3.zero;
 
-            Debug.Log($"Snapped {tool.name} to {zone} at start");
+            //Debug.Log($"Snapped {tool.name} to {zone} at start");
         }
     }
 
@@ -73,7 +73,7 @@ public class BannerToolsSnapZone : MonoBehaviour
             return;
         }
 
-        Debug.Log("Tool removed");
+        //Debug.Log("Tool removed");
 
         // get reference to the tool game object
         var tool = other.gameObject;
@@ -90,6 +90,8 @@ public class BannerToolsSnapZone : MonoBehaviour
 
         // store tools position
         var pos = tool.transform.position;
+
+        Debug.Log($"Tool {tool.name} exited zone {zone}");
     }
 
     public void OnTriggerEnter2D(Collider2D other)
@@ -103,7 +105,7 @@ public class BannerToolsSnapZone : MonoBehaviour
             return;
         }
 
-        Debug.Log("Tool returned");
+        //Debug.Log("Tool returned");
 
         // get reference to the BannerToolsSnapZone script on this GameObject
         if (TryGetComponent(out BannerToolsSnapZone zone))
@@ -122,5 +124,7 @@ public class BannerToolsSnapZone : MonoBehaviour
                 toolScript.ChangeState(false);
             }
         }
+
+        Debug.Log($"Tool {other.name} entered zone {zone}");
     }
 }
