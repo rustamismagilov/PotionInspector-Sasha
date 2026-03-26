@@ -1,4 +1,3 @@
-using TMPro.EditorUtilities;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Page", menuName = "Guidebook Page")]
